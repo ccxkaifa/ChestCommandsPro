@@ -21,7 +21,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <encoding>utf-8</encoding>
+                    <encoding>UTF-8</encoding>
                     <source>8</source>
                     <target>8</target>
                 </configuration>
@@ -51,7 +51,7 @@
                 </configuration>
             </plugin>
 
-            <!-- 本地依赖处理插件 -->
+            <!-- 依赖处理插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -60,48 +60,48 @@
                     <!-- 处理 PlayerPoints -->
                     <execution>
                         <id>copy-playerpoints</id>
-                        <phase>generate-resources</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>local.playerpoints</groupId>
+                                    <groupId>org.black_ixx</groupId>
                                     <artifactId>PlayerPoints</artifactId>
                                     <version>2.2.4</version>
-                                    <file>${project.basedir}/lib/PlayerPoints-2.2.4.jar</file>
                                     <type>jar</type>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                    <destFileName>PlayerPoints-2.2.4.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
                         </configuration>
                     </execution>
-                    
+
                     <!-- 处理 ChestCommands -->
                     <execution>
                         <id>copy-chestcommands</id>
-                        <phase>generate-resources</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>local.chestcommands</groupId>
+                                    <groupId>com.github.filoghost</groupId>
                                     <artifactId>ChestCommands</artifactId>
                                     <version>3.3.0</version>
-                                    <file>${project.basedir}/lib/ChestCommands-3.3.0.jar</file>
                                     <type>jar</type>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                    <destFileName>ChestCommands-3.3.0.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- JAR 打包配置 -->
+            <!-- 打包插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -124,25 +124,6 @@
     </properties>
 
     <repositories>
-        <!-- 优先级1: 本地仓库 -->
-        <repository>
-            <id>local-maven-repo</id>
-            <url>file://${user.home}/.m2/repository</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-
-        <!-- 优先级2: JitPack -->
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-
         <!-- PaperMC 旧版仓库 -->
         <repository>
             <id>papermc-legacy</id>
@@ -169,6 +150,26 @@
     </repositories>
 
     <dependencies>
+        <!-- ===== 本地依赖 ===== -->
+        <!-- PlayerPoints -->
+        <dependency>
+            <groupId>org.black_ixx</groupId>
+            <artifactId>PlayerPoints</artifactId>
+            <version>2.2.4</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/PlayerPoints-2.2.4.jar</systemPath>
+        </dependency>
+
+        <!-- ChestCommands -->
+        <dependency>
+            <groupId>com.github.filoghost</groupId>
+            <artifactId>ChestCommands</artifactId>
+            <version>3.3.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/ChestCommands-3.3.0.jar</systemPath>
+        </dependency>
+
+        <!-- ===== 远程依赖 ===== -->
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

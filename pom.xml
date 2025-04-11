@@ -14,28 +14,31 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <!-- 更新为已验证存在的版本 -->
+        <java.version>1.8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <!-- 已验证存在的版本 -->
         <paper.version>1.16.5-R0.1-SNAPSHOT</paper.version>
         <protocollib.version>4.8.0</protocollib.version>
         <placeholderapi.version>2.11.3</placeholderapi.version>
-        <playerpoints.version>2.1.4</playerpoints.version> <!-- 回退到已知存在版本 -->
+        <playerpoints.version>2.1.4</playerpoints.version>
     </properties>
 
+    <!-- 仓库配置必须放在 dependencies 之前 -->
     <repositories>
         <!-- PaperMC 官方仓库 -->
         <repository>
-            <id>papermc-repo</id>
+            <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
             <snapshots>
-                <enabled>true</enabled> <!-- 必须启用 SNAPSHOT -->
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
 
         <!-- ProtocolLib 仓库 -->
         <repository>
-            <id>dmulloy2-repo</id>
+            <id>dmulloy2</id>
             <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
 
@@ -45,16 +48,10 @@
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
 
-        <!-- PlayerPoints 正确仓库（使用 CodeMC） -->
+        <!-- PlayerPoints 正确仓库 -->
         <repository>
-            <id>codemc-repo</id>
+            <id>codemc</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
-        </repository>
-
-        <!-- Maven Central 作为备用 -->
-        <repository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2/</url>
         </repository>
     </repositories>
 
@@ -83,7 +80,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- PlayerPoints（使用 CodeMC 仓库中的版本） -->
+        <!-- PlayerPoints -->
         <dependency>
             <groupId>org.black_ixx</groupId>
             <artifactId>PlayerPoints</artifactId>
@@ -99,8 +96,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
 
@@ -114,16 +111,29 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
 
-    <!-- 添加阿里云镜像加速 -->
+    <!-- 正确的 profiles 配置位置 -->
     <profiles>
         <profile>
-            <id>aliyun</id>
+            <id>aliyun-mirror</id>
             <repositories>
                 <repository>
                     <id>aliyun</id>
@@ -136,9 +146,9 @@
                     </snapshots>
                 </repository>
             </repositories>
+            <activation>
+                <activeByDefault>true</activeByDefault> <!-- 默认激活镜像 -->
+            </activation>
         </profile>
     </profiles>
-    <activeProfiles>
-        <activeProfile>aliyun</activeProfile>
-    </activeProfiles>
 </project>

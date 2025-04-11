@@ -12,25 +12,25 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <paper.version>1.16.5-R0.1</paper.version>
+        <paper.version>1.16.5-R0.1-20210115.230527-20</paper.version>
         <protocollib.version>4.8.0</protocollib.version>
         <placeholderapi.version>2.11.5</placeholderapi.version>
     </properties>
 
     <repositories>
-        <!-- PaperMC Releases -->
+        <!-- PaperMC 历史构建仓库 -->
         <repository>
-            <id>papermc-releases</id>
-            <url>https://repo.papermc.io/repository/maven-releases/</url>
+            <id>papermc-legacy</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
 
-        <!-- ProtocolLib -->
+        <!-- ProtocolLib 仓库 -->
         <repository>
             <id>dmulloy2</id>
             <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
 
-        <!-- PlaceholderAPI -->
+        <!-- PlaceholderAPI 仓库 -->
         <repository>
             <id>extendedclip</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
@@ -40,7 +40,7 @@
     <dependencies>
         <!-- Paper API -->
         <dependency>
-            <groupId>io.papermc.paper</groupId>
+            <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper.version}</version>
             <scope>provided</scope>

@@ -16,11 +16,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <!-- 依赖版本 -->
+        <!-- 更新为已验证存在的版本 -->
         <paper.version>1.16.5-R0.1-SNAPSHOT</paper.version>
         <protocollib.version>4.8.0</protocollib.version>
         <placeholderapi.version>2.11.3</placeholderapi.version>
-        <playerpoints.version>3.2.4</playerpoints.version>
+        <playerpoints.version>2.1.4</playerpoints.version> <!-- 回退到已知存在版本 -->
     </properties>
 
     <repositories>
@@ -28,6 +28,9 @@
         <repository>
             <id>papermc-repo</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
+            <snapshots>
+                <enabled>true</enabled> <!-- 必须启用 SNAPSHOT -->
+            </snapshots>
         </repository>
 
         <!-- ProtocolLib 仓库 -->
@@ -42,10 +45,10 @@
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
 
-        <!-- PlayerPoints 仓库（需确认实际地址） -->
+        <!-- PlayerPoints 正确仓库（使用 CodeMC） -->
         <repository>
-            <id>blackixx-repo</id>
-            <url>https://repo.blackixx.org/repository/maven-public/</url>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
 
         <!-- Maven Central 作为备用 -->
@@ -80,7 +83,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- PlayerPoints -->
+        <!-- PlayerPoints（使用 CodeMC 仓库中的版本） -->
         <dependency>
             <groupId>org.black_ixx</groupId>
             <artifactId>PlayerPoints</artifactId>
@@ -91,7 +94,6 @@
 
     <build>
         <plugins>
-            <!-- 编译插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -102,7 +104,6 @@
                 </configuration>
             </plugin>
 
-            <!-- 打包插件（含依赖） -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -113,57 +114,31 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
-                        <configuration>
-                            <relocations>
-                                <!-- 可选：依赖重定位 -->
-                            </relocations>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- 资源过滤 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
         </plugins>
-
-        <!-- 资源目录配置 -->
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
 
-    <!-- 仓库更新策略 -->
-    <pluginRepositories>
-        <pluginRepository>
-            <id>papermc-repo</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
+    <!-- 添加阿里云镜像加速 -->
+    <profiles>
+        <profile>
+            <id>aliyun</id>
+            <repositories>
+                <repository>
+                    <id>aliyun</id>
+                    <url>https://maven.aliyun.com/repository/public</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>aliyun</activeProfile>
+    </activeProfiles>
 </project>

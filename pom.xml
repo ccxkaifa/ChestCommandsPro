@@ -12,16 +12,17 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <paper.version>1.16.5-R0.1-SNAPSHOT</paper.version>
+        <!-- 使用官方验证存在的版本 -->
+        <paper.version>1.16.5-R0.1-20210115.230527-20</paper.version>
         <protocollib.version>4.8.0</protocollib.version>
         <placeholderapi.version>2.11.5</placeholderapi.version>
     </properties>
 
     <repositories>
-        <!-- PaperMC 仓库 -->
+        <!-- PaperMC 旧版仓库 -->
         <repository>
-            <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
+            <id>papermc-legacy</id>
+            <url>https://repo.azortis.dev/repository/maven-public/</url>
         </repository>
 
         <!-- ProtocolLib 仓库 -->
@@ -38,13 +39,12 @@
     </repositories>
 
     <dependencies>
-        <!-- Paper API（通过插件下载） -->
+        <!-- Paper API -->
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/paper-api.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
 
         <!-- 其他依赖保持不变 -->
@@ -52,29 +52,24 @@
 
     <build>
         <plugins>
-            <!-- 下载插件配置 -->
+            <!-- 自动下载 PaperAPI 的插件 -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>wagon-maven-plugin</artifactId>
-                <version>2.0.2</version>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.7.0</version>
                 <executions>
                     <execution>
                         <id>download-paper-api</id>
                         <phase>initialize</phase>
                         <goals>
-                            <goal>download-single</goal>
+                            <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>https://repo.papermc.io/repository/maven-public/com/destroystokyo/paper/paper-api/1.16.5-R0.1-SNAPSHOT/paper-api-1.16.5-R0.1-SNAPSHOT.jar</url>
-                            <toFile>${project.basedir}/lib/paper-api.jar</toFile>
+                            <url>https://repo.azortis.dev/repository/maven-public/com/destroystokyo/paper/paper-api/1.16.5-R0.1-20210115.230527-20/paper-api-1.16.5-R0.1-20210115.230527-20.jar</url>
+                            <outputDirectory>${project.basedir}/lib</outputDirectory>
+                            <outputFileName>paper-api.jar</outputFileName>
+                            <unpack>false</unpack>
                             <skip>false</skip>
-                            <settings>
-                                <httpHeaders>
-                                    <User-Agent>Maven-Wagon/2.0</User-Agent>
-                                </httpHeaders>
-                                <retryFailedDownloadCount>3</retryFailedDownloadCount>
-                                <sslVerification>false</sslVerification>
-                            </settings>
                         </configuration>
                     </execution>
                 </executions>

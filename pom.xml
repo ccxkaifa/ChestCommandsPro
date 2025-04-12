@@ -12,8 +12,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <!-- 使用官方验证存在的版本 -->
-        <paper.version>1.16.5-R0.1-20210115.230527-20</paper.version>
+        <!-- 验证存在的版本 -->
+        <paper.version>1.16.5-R0.1-SNAPSHOT</paper.version>
         <protocollib.version>4.8.0</protocollib.version>
         <placeholderapi.version>2.11.5</placeholderapi.version>
     </properties>
@@ -22,7 +22,7 @@
         <!-- PaperMC 旧版仓库 -->
         <repository>
             <id>papermc-legacy</id>
-            <url>https://repo.azortis.dev/repository/maven-public/</url>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
 
         <!-- ProtocolLib 仓库 -->
@@ -31,15 +31,21 @@
             <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
 
-        <!-- PlaceholderAPI 仓库 -->
+        <!-- PlaceholderAPI 官方仓库 -->
         <repository>
             <id>extendedclip</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+
+        <!-- CodeMC 仓库 -->
+        <repository>
+            <id>codemc</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
-        <!-- Paper API -->
+        <!-- Paper API (使用旧版 groupId) -->
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -47,35 +53,71 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- 其他依赖保持不变 -->
+        <!-- ProtocolLib -->
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>${protocollib.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- PlaceholderAPI -->
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>${placeholderapi.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- 编译插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
             <!-- 自动下载 PaperAPI 的插件 -->
             <plugin>
-                <groupId>com.googlecode.maven-download-plugin</groupId>
-                <artifactId>download-maven-plugin</artifactId>
-                <version>1.7.0</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>wagon-maven-plugin</artifactId>
+                <version>2.0.2</version>
                 <executions>
                     <execution>
                         <id>download-paper-api</id>
                         <phase>initialize</phase>
                         <goals>
-                            <goal>wget</goal>
+                            <goal>download-single</goal>
                         </goals>
                         <configuration>
-                            <url>https://repo.azortis.dev/repository/maven-public/com/destroystokyo/paper/paper-api/1.16.5-R0.1-20210115.230527-20/paper-api-1.16.5-R0.1-20210115.230527-20.jar</url>
-                            <outputDirectory>${project.basedir}/lib</outputDirectory>
-                            <outputFileName>paper-api.jar</outputFileName>
-                            <unpack>false</unpack>
-                            <skip>false</skip>
+                            <url>https://repo.papermc.io/repository/maven-public/com/destroystokyo/paper/paper-api/1.16.5-R0.1-SNAPSHOT/</url>
+                            <fileName>paper-api-1.16.5-R0.1-SNAPSHOT.jar</fileName>
+                            <downloadDirectory>${project.basedir}/lib</downloadDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- 其他插件配置 -->
+            <!-- 打包插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

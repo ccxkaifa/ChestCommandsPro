@@ -12,31 +12,45 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <paper.version>1.16.5-780</paper.version>
+        <!-- 验证存在的版本 -->
+        <paper.version>1.16.5-R0.1-SNAPSHOT</paper.version>
         <protocollib.version>4.8.0</protocollib.version>
         <placeholderapi.version>2.11.5</placeholderapi.version>
     </properties>
 
     <repositories>
-        <!-- 必需仓库 -->
+        <!-- PaperMC 旧版仓库 -->
         <repository>
-            <id>codemc-releases</id>
-            <url>https://repo.codemc.io/repository/maven-releases/</url>
+            <id>papermc-legacy</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
+
+        <!-- ProtocolLib 仓库 -->
         <repository>
-            <id>dmulloy2-snapshots</id>
+            <id>dmulloy2</id>
             <url>https://repo.dmulloy2.net/repository/public/</url>
+        </repository>
+
+        <!-- PlaceholderAPI 官方仓库 -->
+        <repository>
+            <id>extendedclip</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+
+        <!-- CodeMC 仓库 -->
+        <repository>
+            <id>codemc</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <!-- 手动安装的 PaperAPI -->
+        <!-- Paper API (使用旧版 groupId) -->
         <dependency>
-            <groupId>io.papermc.paper</groupId>
+            <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/paper-api-1.16.5-780.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
 
         <!-- ProtocolLib -->
@@ -58,6 +72,7 @@
 
     <build>
         <plugins>
+            <!-- 编译插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -68,6 +83,28 @@
                 </configuration>
             </plugin>
 
+            <!-- 自动下载 PaperAPI 的插件 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>wagon-maven-plugin</artifactId>
+                <version>2.0.2</version>
+                <executions>
+                    <execution>
+                        <id>download-paper-api</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>download-single</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://repo.papermc.io/repository/maven-public/com/destroystokyo/paper/paper-api/1.16.5-R0.1-SNAPSHOT/</url>
+                            <fileName>paper-api-1.16.5-R0.1-SNAPSHOT.jar</fileName>
+                            <downloadDirectory>${project.basedir}/lib</downloadDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 打包插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -78,24 +115,9 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.google.gson</pattern>
-                                    <shadedPattern>yourpackage.shaded.gson</shadedPattern>
-                                </relocation>
-                            </relocations>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
 </project>
